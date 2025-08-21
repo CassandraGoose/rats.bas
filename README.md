@@ -1,24 +1,15 @@
-# Phaser Vite TypeScript Template
+# RATS
 
-This is a Phaser 3 project template that uses Vite for bundling. It supports hot-reloading for quick development workflow, includes TypeScript support and scripts to generate production-ready builds.
+I built this little game to test out Phaser and also to pay homage to a game I loved as a child: GORILLAS.BAS. GORILLAS.BAS came with MS-DOS, a command line operating system used in the 80s and 90s. The game involves throwing an explosive banana at your gorilla opponent over a city skyline, keeping in mind gravity, wind-speed, throwing angle, and velocity. Try it out on CLASSIC RELOAD: https://classicreload.com/play/qbasic-gorillas.html#
 
-**[This Template is also available as a JavaScript version.](https://github.com/phaserjs/template-vite)**
+This game is purely for learning purposes. 
 
-### Versions
+RATS encourages users to hurl explosive slices of pizza at their opponent over a city skyline but only requires the gamer to consider gravity, throwing angle, and velocity. It's meant to feel under-polished and evoke a retro feel. 
 
-This template has been updated for:
 
-- [Phaser 3.90.0](https://github.com/phaserjs/phaser)
-- [Vite 6.3.1](https://github.com/vitejs/vite)
-- [TypeScript 5.7.2](https://github.com/microsoft/TypeScript)
+## Getting Started
 
-![screenshot](screenshot.png)
-
-## Requirements
-
-[Node.js](https://nodejs.org) is required to install dependencies and run scripts via `npm`.
-
-## Available Commands
+I utlized the Phaser supplied vite template: https://github.com/phaserjs/template-vite-ts
 
 | Command | Description |
 |---------|-------------|
@@ -28,33 +19,25 @@ This template has been updated for:
 | `npm run dev-nolog` | Launch a development web server without sending anonymous data (see "About log.js" below) |
 | `npm run build-nolog` | Create a production build in the `dist` folder without sending anonymous data (see "About log.js" below) |
 
-## Writing Code
 
-After cloning the repo, run `npm install` from your project directory. Then, you can start the local development server by running `npm run dev`.
+## Template Project Structure (Supplied by Phaser)
 
-The local development server runs on `http://localhost:8080` by default. Please see the Vite documentation if you wish to change this, or add SSL support.
-
-Once the server is running you can edit any of the files in the `src` folder. Vite will automatically recompile your code and then reload the browser.
-
-## Template Project Structure
-
-We have provided a default project structure to get you started. This is as follows:
-
-## Template Project Structure
-
-We have provided a default project structure to get you started:
 
 | Path                         | Description                                                |
-|------------------------------|------------------------------------------------------------|
-| `index.html`                 | A basic HTML page to contain the game.                     |
-| `public/assets`              | Game sprites, audio, etc. Served directly at runtime.      |
-| `public/style.css`           | Global layout styles.                                      |
-| `src/main.ts`                | Application bootstrap.                                     |
-| `src/game`                   | Folder containing the game code.                           |
-| `src/game/main.ts`           | Game entry point: configures and starts the game.          |
-| `src/game/scenes`            | Folder with all Phaser game scenes.                        | 
+|--------------------------------|------------------------------------------------------------|
+| `index.html`                   | A basic HTML page to contain the game.                     |
+| `public/assets`                | Game sprites, audio, etc. Served directly at runtime.      |
+| `public/style.css`             | Global layout styles.                                      |
+| `src/main.ts`                  | Application bootstrap.                                     |
+| `src/game`                     | Folder containing the game code.                           |
+| `src/game/main.ts`             | Game entry point: configures and starts the game.          |
+| `src/game/scenes`              | Folder with all Phaser game scenes.                        | 
+| `src/game/scenes/Preloader.ts` | Loads assets before the game starts for snappy UX.         | 
+| `src/game/classes`             | Organize game state and functionality in a basic capacity  | 
+todo confirm you're naming the folder classes
 
 
+todo remove items below once you've built the game
 ## Handling Assets
 
 Vite supports loading assets via JavaScript module `import` statements.
@@ -140,19 +123,3 @@ After:
 
 Either of these will stop `log.js` from running. If you do decide to do this, please could you at least join our Discord and tell us which template you're using! Or send us a quick email. Either will be super-helpful, thank you.
 
-## Join the Phaser Community!
-
-We love to see what developers like you create with Phaser! It really motivates us to keep improving. So please join our community and show-off your work 😄
-
-**Visit:** The [Phaser website](https://phaser.io) and follow on [Phaser Twitter](https://twitter.com/phaser_)<br />
-**Play:** Some of the amazing games [#madewithphaser](https://twitter.com/search?q=%23madewithphaser&src=typed_query&f=live)<br />
-**Learn:** [API Docs](https://newdocs.phaser.io), [Support Forum](https://phaser.discourse.group/) and [StackOverflow](https://stackoverflow.com/questions/tagged/phaser-framework)<br />
-**Discord:** Join us on [Discord](https://discord.gg/phaser)<br />
-**Code:** 2000+ [Examples](https://labs.phaser.io)<br />
-**Read:** The [Phaser World](https://phaser.io/community/newsletter) Newsletter<br />
-
-Created by [Phaser Studio](mailto:support@phaser.io). Powered by coffee, anime, pixels and love.
-
-The Phaser logo and characters are &copy; 2011 - 2025 Phaser Studio Inc.
-
-All rights reserved.
