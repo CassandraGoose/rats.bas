@@ -26,7 +26,9 @@ export class MainMenu extends Scene {
 
     // this.logo = this.add.image(512, 300, 'logo')
 
-    // todo lol make these with loops or something
+    //todo rename mainmenu to instructions or something
+
+    // todo lol make these with loops or something and put them in a method
     this.add.text(
       10,
       10,
