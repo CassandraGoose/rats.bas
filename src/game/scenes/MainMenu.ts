@@ -119,7 +119,7 @@ export class MainMenu extends Scene {
       })
       .setOrigin(0.5);
 
-    this.input.once("pointerdown", () => {
+    this.input.keyboard?.on('keydown', () => {
       this.scene.start("Game");
     });
   }
