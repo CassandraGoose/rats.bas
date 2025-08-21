@@ -1,32 +1,126 @@
-import { Scene, GameObjects } from 'phaser';
+import { Scene, GameObjects } from "phaser";
 
-export class MainMenu extends Scene
-{
-    background: GameObjects.Image;
-    logo: GameObjects.Image;
-    title: GameObjects.Text;
+export class MainMenu extends Scene {
+  // background: GameObjects.Image;
+  // logo: GameObjects.Image;
+  title: GameObjects.Text;
+  description: GameObjects.Text;
+  instruction: GameObjects.Text;
+  background: [
+    GameObjects.Text,
+    GameObjects.Text,
+    GameObjects.Text,
+    GameObjects.Text,
+    GameObjects.Text,
+    GameObjects.Text,
+    GameObjects.Text,
+    GameObjects.Text
+  ];
 
-    constructor ()
-    {
-        super('MainMenu');
-    }
+  constructor() {
+    super("MainMenu");
+  }
 
-    create ()
-    {
-        this.background = this.add.image(512, 384, 'background');
+  create() {
+    // this.background = this.add.image(512, 384, 'background');
 
-        this.logo = this.add.image(512, 300, 'logo');
+    // this.logo = this.add.image(512, 300, 'logo')
 
-        this.title = this.add.text(512, 460, 'Main Menu', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
-            align: 'center'
-        }).setOrigin(0.5);
+    // todo lol make these with loops or something
+    this.add.text(
+      10,
+      10,
+      "*    *    *    *    *    *    *    *    *    *    *    *",
+      { color: "red", fontFamily: "Courier New", fontSize: 32 }
+    );
+    this.add.text(
+      10,
+      550,
+      "*    *    *    *    *    *    *    *    *    *    *    *",
+      { color: "red", fontFamily: "Courier New", fontSize: 32 }
+    );
+    this.add.text(10, 112, "*", {
+      color: "red",
+      fontFamily: "Courier New",
+      fontSize: 32,
+    });
+    this.add.text(10, 224, "*", {
+      color: "red",
+      fontFamily: "Courier New",
+      fontSize: 32,
+    });
 
-        this.input.once('pointerdown', () => {
+    this.add.text(10, 336, "*", {
+      color: "red",
+      fontFamily: "Courier New",
+      fontSize: 32,
+    });
 
-            this.scene.start('Game');
+    this.add.text(10, 448, "*", {
+      color: "red",
+      fontFamily: "Courier New",
+      fontSize: 32,
+    });
 
-        });
-    }
+    this.add.text(972, 112, "*", {
+      color: "red",
+      fontFamily: "Courier New",
+      fontSize: 32,
+    });
+    this.add.text(972, 224, "*", {
+      color: "red",
+      fontFamily: "Courier New",
+      fontSize: 32,
+    });
+
+    this.add.text(972, 336, "*", {
+      color: "red",
+      fontFamily: "Courier New",
+      fontSize: 32,
+    });
+
+    this.add.text(972, 448, "*", {
+      color: "red",
+      fontFamily: "Courier New",
+      fontSize: 32,
+    });
+
+    this.title = this.add
+      .text(512, 200, "R A T S", {
+        fontFamily: "Courier",
+        fontSize: 38,
+        color: "#ffffff",
+        align: "center",
+      })
+      .setOrigin(0.5);
+
+    this.description = this.add
+      .text(
+        512,
+        300,
+        "Your mission is to hit your opponent with the exploding pizza slice by varying the angle and power of your throw, taking into account gravity and the city skyline.",
+        {
+          fontFamily: "Courier New",
+          fontSize: 26,
+          color: "#ffffff",
+          align: "center",
+          wordWrap: { width: 850, useAdvancedWrap: true },
+        }
+      )
+      .setOrigin(0.5);
+
+    this.description = this.add
+      .text(512, 600, "Press any key to continue", {
+        fontFamily: "Courier New",
+        fontSize: 26,
+        color: "#ffffff",
+        align: "center",
+        wordWrap: { width: 850, useAdvancedWrap: true },
+      })
+      .setOrigin(0.5);
+
+    this.input.once("pointerdown", () => {
+      this.scene.start("Game");
+    });
+  }
 }
