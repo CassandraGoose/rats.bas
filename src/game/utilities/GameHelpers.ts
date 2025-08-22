@@ -1,19 +1,17 @@
-export const createAngleVelocityUI = (player: string, eventCallback: (angleInput: HTMLInputElement, velocityInput: HTMLInputElement) => void) => {
+export const createAngleVelocityUI = (player: number, eventCallback: (angleInput: HTMLInputElement, velocityInput: HTMLInputElement) => void) => {
   const backgroundColor = '#00009D';
   const borderStyle = '2px solid white';
   const fontFamily = "'Courier New', monospace";
 
-  const leftSetting: Record<string, string> = {
-    'Player 1': 'flex-start',
-    'Player 2': 'flex-end',
-  };
+  const playerSetting = ['flex-start', 'flex-end'];
+
 
   // --- Container ---
   const container = document.createElement("div");
   container.id = "projectile-ui";
   container.style.position = "absolute";
   container.style.display = 'flex';
-  container.style.justifyContent = leftSetting[player];
+  container.style.justifyContent = playerSetting[player];
   container.style.alignItems = 'flex-start';
   container.style.top = "10px";
   container.style.width = "990px";
@@ -33,7 +31,7 @@ export const createAngleVelocityUI = (player: string, eventCallback: (angleInput
   playerName.style.color = 'white';
   playerName.style.fontSize = '22pt';
   playerName.style.margin = '2pt 0';
-  playerName.textContent = player;
+  playerName.textContent = `Player ${player}`;
   inputs.appendChild(playerName);
 
   // --- Angle Input ---

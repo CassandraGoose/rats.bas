@@ -1,16 +1,18 @@
 import { Scene } from "phaser";
 import { GameState } from "../state/GameState";
-import { PlayerState } from "../state/PlayerState";
 import { createAngleVelocityUI } from "../utilities/GameHelpers";
+import { Player } from "../entities/Player";
 
 export class Game extends Scene {
   camera: Phaser.Cameras.Scene2D.Camera;
   background: Phaser.GameObjects.Image;
   msg_text: Phaser.GameObjects.Text;
   buildings: Phaser.Physics.Arcade.StaticGroup;
-  rats: Phaser.Physics.Arcade.Group;
-  player1: PlayerState;
-  player2: PlayerState;
+  playerGroup: Phaser.Physics.Arcade.Group;
+  player1: Player;
+  player2: Player;
+  players: Player[];
+  // todo?
   pizza: Phaser.Types.Physics.Arcade.ImageWithDynamicBody | null;
   explosionDamages: Phaser.Physics.Arcade.StaticGroup;
   gameState: GameState;
@@ -18,16 +20,11 @@ export class Game extends Scene {
   constructor() {
     super("Game");
   }
-  //todo
-  // rat -> add rat, explode rat? setupPhysics? or  do we need that stuff in the game? idk
-  // buildings -> create buildings, setupPhysics
 
   create() {
     this.setupBackground();
     this.setupGame();
     this.setupUI();
-
-    this.setupPlayerPhysics();
   }
 
   update() {
@@ -54,10 +51,15 @@ export class Game extends Scene {
     this.camera = this.cameras.main;
     this.camera.setBackgroundColor(0xff0000a3);
 
+    this.buildings = this.physics.add.staticGroup();
     this.createBuildings();
   }
 
   setupProjectialUI() {
+    console.log(this.playerGroup.children);
+    const currentPlayer = this.playerGroup.getChildren()[
+      this.gameState.currentPlayer
+    ] as Phaser.Physics.Arcade.Image;
     const callback = (
       angleInput: HTMLInputElement,
       velocityInput: HTMLInputElement
@@ -65,10 +67,10 @@ export class Game extends Scene {
       const angle = parseFloat(angleInput.value);
       const velocity = parseFloat(velocityInput.value);
 
-      this.firePizza(this.gameState.currentPlayer, angle, velocity);
+      this.firePizza(currentPlayer, angle, velocity);
     };
 
-    createAngleVelocityUI(this.gameState.currentPlayer.name, callback);
+    createAngleVelocityUI(this.gameState.currentPlayer, callback);
   }
 
   setupUI() {
@@ -85,22 +87,14 @@ export class Game extends Scene {
   }
 
   setupGame() {
-    const [rat1, rat2] = this.createRats();
-    // todo fix hard code rounds
-    this.gameState = new GameState(3, rat1, rat2);
-    this.player1 = this.gameState.player1;
-    this.player2 = this.gameState.player2;
+    this.playerGroup = this.physics.add.group();
+    // todo
+    this.player1 = new Player(this.physics, this.buildings, this.playerGroup);
+    this.player2 = new Player(this.physics, this.buildings, this.playerGroup);
+    this.players = [this.player1, this.player2];
+    // fix hard code rounds
+    this.gameState = new GameState(3);
     this.explosionDamages = this.physics.add.staticGroup();
-  }
-
-  setupPlayerPhysics() {
-    this.player1.playerObject.setBounce(0.2);
-    this.player2.playerObject.setBounce(0.2);
-    this.player1.playerObject.setCollideWorldBounds(true);
-    this.player2.playerObject.setCollideWorldBounds(true);
-
-    this.physics.add.collider(this.player1.playerObject, this.buildings);
-    this.physics.add.collider(this.player2.playerObject, this.buildings);
   }
 
   startNextRound() {
@@ -108,37 +102,20 @@ export class Game extends Scene {
 
     this.resetBuildings();
     this.resetExplosionDamage();
-    this.resetRats();
+    //todo
+    this.player1.resetPlayer();
+    this.player2.resetPlayer();
   }
 
   resetBuildings() {
-    this.buildings.clear(true, true); // remove all old buildings
-    this.createBuildings(); // add new buildings
+    this.buildings.clear(true, true);
+    this.createBuildings();
 
-    // 🔑 re-add the collider with rats (or any other objects that need it)
-    this.physics.add.collider(this.rats, this.buildings);
+    this.physics.add.collider(this.playerGroup, this.buildings);
   }
 
   resetExplosionDamage() {
     this.explosionDamages.clear(true, true);
-  }
-
-  resetRats() {
-    const buildingCount = this.buildings.getChildren().length;
-
-    const rat1Building =
-      this.buildings.getChildren()[1] as Phaser.Physics.Arcade.Image;
-    const rat2Building = this.buildings.getChildren()[
-      buildingCount - 2
-    ] as Phaser.Physics.Arcade.Image;
-
-    this.player1.playerObject.setPosition(rat1Building.x, 0);
-    this.player1.playerObject.setVelocity(0, 0);
-    this.player1.playerObject.setAcceleration(0, 0);
-
-    this.player2.playerObject.setPosition(rat2Building.x, 0);
-    this.player2.playerObject.setVelocity(0, 0);
-    this.player2.playerObject.setAcceleration(0, 0);
   }
 
   // todo deal with the pizza flying off the edge, need to go to next player if so.
@@ -152,44 +129,58 @@ export class Game extends Scene {
     this.pizza = null;
     this.removeProjectialUI();
 
-    const newPlayer =
-      this.gameState.currentPlayer === this.gameState.player1
-        ? this.gameState.player2
-        : this.gameState.player1;
-
-    this.gameState.setCurrentPlayer(newPlayer);
+    this.gameState.toggleCurrentPlayer();
 
     this.setupProjectialUI();
   }
 
   explodeRat() {
-    console.log("explode rat");
-
     //trigger some kind of explosion sprite
     // todo make the size of the rats saved somehwere....
     // make the colors globally accessible in some way
-    const circle = this.explosionDamages.create(
-      this.player2.playerObject.x,
-      this.player2.playerObject.y,
+    this.explosionDamages.create(
+      this.player2.gameObject.x,
+      this.player2.gameObject.y,
       "white"
     ) as Phaser.Physics.Arcade.Image;
-    this.add.circle(
-      this.player2.playerObject.x,
-      this.player2.playerObject.y,
+
+    const explosionCircle = this.add.circle(
+      this.player2.gameObject.x,
+      this.player2.gameObject.y,
       179,
       0xff0000a3
     );
+    this.explosionDamages.add(explosionCircle);
 
-    this.startNextRound();
+    // todo put text on screen for who won.
+    this.physics.pause();
+
+    this.time.delayedCall(1000, () => {
+      this.physics.resume();
+      this.startNextRound();
+    });
   }
 
-  firePizza(player: PlayerState, angle: number, velocity: number) {
+  firePizza(
+    player: Phaser.Physics.Arcade.Image,
+    angle: number,
+    velocity: number
+  ) {
     this.pizza = this.physics.add
-      .image(player.playerObject.x, player.playerObject.y, "pizza")
+      .image(player.x, player.y, "pizza")
       .setScale(0.3);
 
     this.physics.add.collider(
-      this.player2.playerObject,
+      this.player1.gameObject,
+      this.pizza,
+      this.explodeRat,
+      undefined,
+      this
+    );
+    // todo: make player method to handle this.
+
+    this.physics.add.collider(
+      this.player2.gameObject,
       this.pizza,
       this.explodeRat,
       undefined,
@@ -207,39 +198,8 @@ export class Game extends Scene {
     );
   }
 
-  createRats() {
-    this.rats = this.physics.add.group();
-
-    const rat1Building =
-      this.buildings.getChildren()[1] as Phaser.Physics.Arcade.Sprite;
-    const rat2Building = this.buildings.getChildren()[
-      this.buildings.getChildren().length - 2
-    ] as Phaser.Physics.Arcade.Sprite;
-
-    // todo we can just add x and then make the buildings collidable and not have to a y, right???? idk
-    const player1 = this.physics.add
-      .image(rat1Building.x, 0, "rat")
-      .setScale(0.7);
-    const player2 = this.physics.add
-      .image(rat2Building.x, 0, "rat")
-      .setScale(0.7);
-
-    player1.body.setSize(126, 179);
-    player2.body.setSize(126, 179);
-    player1.body.setOffset(0, 0);
-    player2.body.setOffset(0, 0);
-
-    this.rats.add(player1);
-    this.rats.add(player2);
-    return [player1, player2];
-
-    // this.add.sprite(rat1Building.x, rat1Building.x - rat1Building.height / 2 - 30, 'rat');
-    // this.add.sprite(rat2Building.x, rat2Building.x - rat2Building.height / 2 - 30, 'rat');
-  }
-
   createBuildings() {
-    this.buildings = this.physics.add.staticGroup();
-
+    // todo create building entity.
     const buildingCount = 8;
     const buildingWidth = this.scale.width / buildingCount;
 
