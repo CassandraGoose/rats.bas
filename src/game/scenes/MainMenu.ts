@@ -2,8 +2,6 @@ import { Scene, GameObjects } from "phaser";
 import { createStarRectangle } from "../utilities/GameHelpers";
 
 export class MainMenu extends Scene {
-  // background: GameObjects.Image;
-  // logo: GameObjects.Image;
   title: GameObjects.Text;
   description: GameObjects.Text;
   instruction: GameObjects.Text;
@@ -50,7 +48,7 @@ export class MainMenu extends Scene {
       })
       .setOrigin(0.5);
 
-    this.input.keyboard?.on('keydown', () => {
+    this.input.keyboard?.on("keydown", () => {
       this.scene.start("Game");
     });
   }

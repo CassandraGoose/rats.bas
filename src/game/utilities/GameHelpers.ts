@@ -5,33 +5,37 @@ export const createAngleVelocityUI = (
     velocityInput: HTMLInputElement
   ) => void
 ) => {
+  // ugh yuck i know but i don't want to spend any more than a day on this
   const backgroundColor = "#00009D";
   const borderStyle = "2px solid white";
   const fontFamily = "'Courier New', monospace";
 
   const playerSetting = ["flex-start", "flex-end"];
 
-  // --- Container ---
   const container = document.createElement("div");
   container.id = "projectile-ui";
   container.style.position = "absolute";
+  container.style.width = "1000px";       
+  container.style.height = "768px";       
+  container.style.top = "50%";          
+  container.style.left = "50%";         
+  container.style.transform = "translate(-50%, -50%)"; 
   container.style.display = "flex";
-  container.style.justifyContent = playerSetting[player];
-  container.style.alignItems = "flex-start";
-  container.style.top = "10px";
-  container.style.width = "990px";
-  container.style.left = "50px";
-  container.style.zIndex = "10";
+  container.style.flexDirection = "column";
+  container.style.justifyContent = "flex-start";
+  container.style.alignItems = playerSetting[player]; 
   container.style.fontFamily = fontFamily;
   container.style.color = "white";
+  container.style.pointerEvents = "none"; 
+  container.style.zIndex = "10";
 
   const inputs = document.createElement("div");
   inputs.style.display = "flex";
   inputs.style.flexDirection = "column";
   inputs.style.gap = "6px";
+  inputs.style.pointerEvents = "auto"; 
   container.appendChild(inputs);
 
-  // --- Player Name ---
   const playerName = document.createElement("p");
   playerName.style.color = "white";
   playerName.style.fontSize = "22pt";
@@ -39,7 +43,6 @@ export const createAngleVelocityUI = (
   playerName.textContent = `Player ${player}`;
   inputs.appendChild(playerName);
 
-  // --- Angle Input ---
   const angleContainer = document.createElement("div");
   angleContainer.style.display = "flex";
   angleContainer.style.alignItems = "center";
@@ -65,7 +68,6 @@ export const createAngleVelocityUI = (
   angleContainer.appendChild(angleInput);
   angleContainer.appendChild(document.createTextNode("°"));
 
-  // --- Velocity Input ---
   const velocityContainer = document.createElement("div");
   velocityContainer.style.display = "flex";
   velocityContainer.style.alignItems = "center";
@@ -77,7 +79,6 @@ export const createAngleVelocityUI = (
   velocityInput.min = "0";
   velocityInput.max = "100";
   velocityInput.value = "50";
-  // Copy style manually to be TS-safe
   velocityInput.style.background = backgroundColor;
   velocityInput.style.border = borderStyle;
   velocityInput.style.color = "white";
@@ -91,7 +92,6 @@ export const createAngleVelocityUI = (
   velocityContainer.appendChild(document.createTextNode("Velocity: "));
   velocityContainer.appendChild(velocityInput);
 
-  // --- Shoot Button ---
   const shootButton = document.createElement("button");
   shootButton.innerText = "Throw!";
   shootButton.style.background = backgroundColor;
@@ -114,13 +114,14 @@ export const createAngleVelocityUI = (
   };
 
   inputs.appendChild(shootButton);
+
   document.body.appendChild(container);
 
-  // --- Event Listener ---
   shootButton.addEventListener("click", () =>
     eventCallback(angleInput, velocityInput)
   );
 };
+
 
 export const createStarRectangle = (context: any) => {
   // look we're not going to talk about this.

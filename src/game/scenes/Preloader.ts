@@ -21,10 +21,17 @@ export class Preloader extends Scene {
       frameWidth: 32,
       frameHeight: 32,
     });
+
     this.load.spritesheet("pizza", "pizza.png", {
       frameWidth: 32,
       frameHeight: 32,
     });
+
+    this.load.spritesheet("explosion", "explosion.png", {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
+
     this.textures.generate("white", {
       data: ["1"],
       pixelWidth: 1,
@@ -33,9 +40,6 @@ export class Preloader extends Scene {
   }
 
   create() {
-    //  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
-    //  For example, you can define global animations here, so we can use them in other scenes.
-
     this.scene.start("MainMenu");
   }
 }

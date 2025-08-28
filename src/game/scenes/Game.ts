@@ -23,6 +23,16 @@ export class Game extends Scene {
     this.setupBackground();
     this.setupGame();
     this.setupUI();
+
+    this.anims.create({
+      key: "explode",
+      frames: this.anims.generateFrameNumbers("explosion", {
+        start: 0,
+        end: 4,
+      }),
+      frameRate: 15,
+      repeat: 0,
+    });
   }
 
   update() {
@@ -30,7 +40,8 @@ export class Game extends Scene {
       if (
         this.pizza.body.blocked.down ||
         this.pizza.body.touching.down ||
-        (this.pizza.x < this.camera.worldView.x || this.pizza.x > this.camera.worldView.right)
+        this.pizza.x < this.camera.worldView.x ||
+        this.pizza.x > this.camera.worldView.right
       ) {
         this.onPizzaHit();
       }
@@ -115,8 +126,8 @@ export class Game extends Scene {
     this.updateScore(this.getScore());
 
     this.players.forEach((player) => {
-      if (player.score === 1) {
-        this.scene.start("GameOver", { winningPlayer: player, });
+      if (player.score === 3) {
+        this.scene.start("GameOver", { winningPlayer: player });
         this.removeProjectialUI();
       }
     });
@@ -140,10 +151,20 @@ export class Game extends Scene {
   onPizzaHit() {
     if (!this.pizza) return;
 
-    // todo make a mini explosion thing for this. dont' need to damage the buildings tho
+    const explosionX = this.pizza.x;
+    const explosionY = this.pizza.y;
 
     this.pizza.destroy();
     this.pizza = null;
+    const explosion = this.physics.add
+      .sprite(explosionX, explosionY, "explosion")
+      .setScale(3);
+    explosion.body.allowGravity = false;
+    explosion.anims.play("explode", true);
+    explosion.on("animationcomplete", () => {
+      explosion.destroy();
+    });
+
     this.removeProjectialUI();
 
     this.gameState.toggleCurrentPlayer();
@@ -161,14 +182,14 @@ export class Game extends Scene {
     const explosionCircle = this.add.circle(
       player.gameObject.x,
       player.gameObject.y,
-      179,
+      80,
       0xff0000a3
     );
     this.explosionDamages.add(explosionCircle);
 
     const scoredPlayer = this.getOtherPlayer(player);
     scoredPlayer?.updateScore();
-    this.updateScore(this.getScore())
+    this.updateScore(this.getScore());
     this.physics.pause();
 
     this.time.delayedCall(1000, () => {
@@ -183,7 +204,7 @@ export class Game extends Scene {
     velocity: number
   ) {
     this.pizza = this.physics.add
-      .sprite(player.x, player.y, "pizza")
+      .sprite(player.x, player.y - 80, "pizza")
       .setScale(2);
 
     this.tweens.add({
@@ -195,16 +216,29 @@ export class Game extends Scene {
     });
 
     this.players.forEach((player) => {
-      this.physics.add.collider(
-        player.gameObject,
+      this.physics.add.overlap(
         this.pizza!,
-        () => this.explodeRat(player),
+        player.gameObject,
+        () => {
+          this.explodeRat(player);
+          this.time.delayedCall(50, () => {
+            this.onPizzaHit();
+          });
+        },
         undefined,
         this
       );
     });
 
-    this.physics.add.collider(this.pizza, this.buildings);
+    this.physics.add.collider(
+      this.pizza,
+      this.buildings,
+      () => {
+        this.onPizzaHit();
+      },
+      undefined,
+      this
+    );
 
     let calculatedAngle = angle;
     const velocityScaleFactor = 5;
@@ -229,7 +263,7 @@ export class Game extends Scene {
 
     for (let i = 0; i < buildingCount; i++) {
       const x = i * buildingWidth + buildingWidth / 2;
-      const height = Phaser.Math.Between(100, this.scale.height - 200);
+      const height = Phaser.Math.Between(100, this.scale.height - 300);
       const y = 750 - height / 2;
 
       const building = this.buildings.create(
