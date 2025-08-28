@@ -1,6 +1,6 @@
 # RATS
 
-I built this little game to test out Phaser and also to pay homage to a game I loved as a child: GORILLAS.BAS. GORILLAS.BAS came with MS-DOS, a command line operating system used in the 80s and 90s. The game involves throwing an explosive banana at your gorilla opponent over a city skyline, keeping in mind gravity, wind-speed, throwing angle, and velocity. Try it out on CLASSIC RELOAD: https://classicreload.com/play/qbasic-gorillas.html#
+I built this little game to test out Phaser and also to pay homage to a game I loved as a child: GORILLAS.BAS. GORILLAS.BAS came with MS-DOS, a command line operating system used in the 80s and 90s. The game involves throwing an explosive banana at your gorilla opponent over a city skyline, keeping in mind gravity, wind-speed, throwing angle, and velocity. Try the original GORILLAS.BAS game out on CLASSIC RELOAD: https://classicreload.com/play/qbasic-gorillas.html#
 
 This game is purely for learning purposes. 
 
