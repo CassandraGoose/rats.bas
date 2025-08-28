@@ -165,6 +165,15 @@ export class Game extends Scene {
     this.pizza = this.physics.add
       .sprite(player.x, player.y, "pizza")
       .setScale(4);
+      
+    this.tweens.add({
+      targets: this.pizza,
+      angle: 360,
+      duration: 500,
+      repeat: -1,
+      ease: "Linear",
+    });
+
     this.players.forEach((player) => {
       this.physics.add.collider(
         player.gameObject,
