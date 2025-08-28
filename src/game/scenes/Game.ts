@@ -165,7 +165,7 @@ export class Game extends Scene {
     this.pizza = this.physics.add
       .sprite(player.x, player.y, "pizza")
       .setScale(4);
-      
+
     this.tweens.add({
       targets: this.pizza,
       angle: 360,
@@ -186,12 +186,20 @@ export class Game extends Scene {
 
     this.physics.add.collider(this.pizza, this.buildings);
 
+    let calculatedAngle = angle;
     const velocityScaleFactor = 5;
     const speed = velocity * velocityScaleFactor;
 
+    if (this.gameState.currentPlayer === 2) {
+      calculatedAngle = Phaser.Math.Angle.WrapDegrees(angle + 180);
+    }
+
+    const xDirection = this.gameState.currentPlayer === 1 ? -1 : 1;
+    const yDirection = -1; 
+
     this.pizza.setVelocity(
-      speed * Math.cos(Phaser.Math.DegToRad(angle)),
-      speed * Math.sin(Phaser.Math.DegToRad(angle)) * -1
+      xDirection * speed * Math.cos(Phaser.Math.DegToRad(calculatedAngle)),
+      yDirection * speed * Math.sin(Phaser.Math.DegToRad(calculatedAngle))
     );
   }
 
