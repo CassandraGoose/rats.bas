@@ -27,11 +27,13 @@ export class Game extends Scene {
 
   update() {
     if (this.pizza) {
-      if (this.pizza.body.blocked.down || this.pizza.body.touching.down) {
+      if (
+        this.pizza.body.blocked.down ||
+        this.pizza.body.touching.down ||
+        !this.camera.worldView.contains(this.pizza.x, this.pizza.y)
+      ) {
         this.onPizzaHit();
       }
-
-      // if (this.pizza.body.)
     }
   }
 
