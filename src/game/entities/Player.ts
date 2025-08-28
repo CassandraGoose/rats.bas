@@ -15,7 +15,6 @@ export class Player {
     this.playerGroup = playerGroup;
     const playerNumber = this.playerGroup ? this.playerGroup.getChildren().length ? 1 : 0 : 0
     this.number = playerNumber;
-    console.log(this.number)
     this.physics = physics;
     this.buildings = buildings;
     this.name = `Player ${this.number}`;

@@ -18,7 +18,10 @@ export class Preloader extends Scene {
   preload() {
     this.load.setPath("assets");
     this.load.image("rat", "rat.png");
-    this.load.image("pizza", "pizza.png");
+    this.load.spritesheet("pizza", "pizza.png", {
+        frameWidth:16,
+        frameHeight: 16
+    });
     this.textures.generate("white", {
       data: ["1"],
       pixelWidth: 1,

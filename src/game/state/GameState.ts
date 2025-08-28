@@ -3,15 +3,9 @@ export class GameState {
   rounds: number;
   currentRound: number;
 
-
-  constructor(
-    rounds: number,
-    // player1Object: Phaser.Types.Physics.Arcade.ImageWithDynamicBody,
-    // player2Object: Phaser.Types.Physics.Arcade.ImageWithDynamicBody
-  ) {
-    this.rounds = rounds | 3;
+  constructor() {
+    this.rounds = 3;
     this.currentRound = 0;
-
     this.currentPlayer = 0;
   }
 

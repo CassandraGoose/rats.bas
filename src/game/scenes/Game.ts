@@ -9,16 +9,14 @@ export class Game extends Scene {
   msg_text: Phaser.GameObjects.Text;
   buildings: Phaser.Physics.Arcade.StaticGroup;
   playerGroup: Phaser.Physics.Arcade.Group;
-  player1: Player;
-  player2: Player;
   players: Player[];
-  // todo?
   pizza: Phaser.Types.Physics.Arcade.ImageWithDynamicBody | null;
   explosionDamages: Phaser.Physics.Arcade.StaticGroup;
   gameState: GameState;
 
   constructor() {
     super("Game");
+    this.players = [];
   }
 
   create() {
@@ -32,6 +30,8 @@ export class Game extends Scene {
       if (this.pizza.body.blocked.down || this.pizza.body.touching.down) {
         this.onPizzaHit();
       }
+
+      // if (this.pizza.body.)
     }
   }
 
@@ -47,7 +47,6 @@ export class Game extends Scene {
   }
 
   setupBackground() {
-    // todo what is this do we need it (genned with the template)
     this.camera = this.cameras.main;
     this.camera.setBackgroundColor(0xff0000a3);
 
@@ -55,11 +54,14 @@ export class Game extends Scene {
     this.createBuildings();
   }
 
-  setupProjectialUI() {
-    console.log(this.playerGroup.children);
-    const currentPlayer = this.playerGroup.getChildren()[
+  getCurrentPlayer() {
+    return this.playerGroup.getChildren()[
       this.gameState.currentPlayer
     ] as Phaser.Physics.Arcade.Image;
+  }
+
+  setupProjectialUI() {
+    const currentPlayer = this.getCurrentPlayer();
     const callback = (
       angleInput: HTMLInputElement,
       velocityInput: HTMLInputElement
@@ -88,29 +90,24 @@ export class Game extends Scene {
 
   setupGame() {
     this.playerGroup = this.physics.add.group();
-    // todo
-    this.player1 = new Player(this.physics, this.buildings, this.playerGroup);
-    this.player2 = new Player(this.physics, this.buildings, this.playerGroup);
-    this.players = [this.player1, this.player2];
-    // fix hard code rounds
-    this.gameState = new GameState(3);
+    for (let i = 0; i < 2; i++) {
+      const player = new Player(this.physics, this.buildings, this.playerGroup);
+      this.players.push(player);
+    }
+    this.gameState = new GameState();
     this.explosionDamages = this.physics.add.staticGroup();
   }
 
   startNextRound() {
     this.gameState.setNextRound();
-
     this.resetBuildings();
     this.resetExplosionDamage();
-    //todo
-    this.player1.resetPlayer();
-    this.player2.resetPlayer();
+    this.players.forEach((player) => player.resetPlayer());
   }
 
   resetBuildings() {
     this.buildings.clear(true, true);
     this.createBuildings();
-
     this.physics.add.collider(this.playerGroup, this.buildings);
   }
 
@@ -130,29 +127,26 @@ export class Game extends Scene {
     this.removeProjectialUI();
 
     this.gameState.toggleCurrentPlayer();
-
+    console.log("pizza hit, new current player:", this.gameState.currentPlayer);
     this.setupProjectialUI();
   }
 
-  explodeRat() {
-    //trigger some kind of explosion sprite
-    // todo make the size of the rats saved somehwere....
-    // make the colors globally accessible in some way
+  explodeRat(player: Player) {
     this.explosionDamages.create(
-      this.player2.gameObject.x,
-      this.player2.gameObject.y,
+      player.gameObject.x,
+      player.gameObject.y,
       "white"
-    ) as Phaser.Physics.Arcade.Image;
+    );
 
     const explosionCircle = this.add.circle(
-      this.player2.gameObject.x,
-      this.player2.gameObject.y,
+      player.gameObject.x,
+      player.gameObject.y,
       179,
       0xff0000a3
     );
     this.explosionDamages.add(explosionCircle);
 
-    // todo put text on screen for who won.
+    // todo put text on screen for who won the round
     this.physics.pause();
 
     this.time.delayedCall(1000, () => {
@@ -167,25 +161,17 @@ export class Game extends Scene {
     velocity: number
   ) {
     this.pizza = this.physics.add
-      .image(player.x, player.y, "pizza")
-      .setScale(0.3);
-
-    this.physics.add.collider(
-      this.player1.gameObject,
-      this.pizza,
-      this.explodeRat,
-      undefined,
-      this
-    );
-    // todo: make player method to handle this.
-
-    this.physics.add.collider(
-      this.player2.gameObject,
-      this.pizza,
-      this.explodeRat,
-      undefined,
-      this
-    );
+      .sprite(player.x, player.y, "pizza")
+      .setScale(4);
+    this.players.forEach((player) => {
+      this.physics.add.collider(
+        player.gameObject,
+        this.pizza!,
+        () => this.explodeRat(player),
+        undefined,
+        this
+      );
+    });
 
     this.physics.add.collider(this.pizza, this.buildings);
 
