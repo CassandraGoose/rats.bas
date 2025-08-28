@@ -30,7 +30,7 @@ export class Game extends Scene {
       if (
         this.pizza.body.blocked.down ||
         this.pizza.body.touching.down ||
-        !this.camera.worldView.contains(this.pizza.x, this.pizza.y)
+        (this.pizza.x < this.camera.worldView.x || this.pizza.x > this.camera.worldView.right)
       ) {
         this.onPizzaHit();
       }
@@ -62,6 +62,10 @@ export class Game extends Scene {
     ] as Phaser.Physics.Arcade.Image;
   }
 
+  getOtherPlayer(nontargetPlayer: Player) {
+    return this.players.find((player) => player !== nontargetPlayer);
+  }
+
   setupProjectialUI() {
     const currentPlayer = this.getCurrentPlayer();
     const callback = (
@@ -79,14 +83,18 @@ export class Game extends Scene {
 
   setupUI() {
     this.setupProjectialUI();
+    this.updateScore("0>Score<0");
+  }
 
-    this.msg_text = this.add.text(512, 720, "0>Score<0", {
+  updateScore(score: string) {
+    this.msg_text = this.add.text(512, 720, score, {
       fontFamily: "Courier",
       fontSize: 26,
       backgroundColor: "#0000A3",
       color: "#ffffff",
       align: "center",
     });
+
     this.msg_text.setOrigin(0.5);
   }
 
@@ -104,7 +112,19 @@ export class Game extends Scene {
     this.gameState.setNextRound();
     this.resetBuildings();
     this.resetExplosionDamage();
+    this.updateScore(this.getScore());
+
+    this.players.forEach((player) => {
+      if (player.score === 1) {
+        this.scene.start("GameOver", { winningPlayer: player, });
+        this.removeProjectialUI();
+      }
+    });
     this.players.forEach((player) => player.resetPlayer());
+  }
+
+  getScore() {
+    return `${this.players[0].score}>Score<${this.players[1].score}}`;
   }
 
   resetBuildings() {
@@ -116,8 +136,6 @@ export class Game extends Scene {
   resetExplosionDamage() {
     this.explosionDamages.clear(true, true);
   }
-
-  // todo deal with the pizza flying off the edge, need to go to next player if so.
 
   onPizzaHit() {
     if (!this.pizza) return;
@@ -148,7 +166,9 @@ export class Game extends Scene {
     );
     this.explosionDamages.add(explosionCircle);
 
-    // todo put text on screen for who won the round
+    const scoredPlayer = this.getOtherPlayer(player);
+    scoredPlayer?.updateScore();
+    this.updateScore(this.getScore())
     this.physics.pause();
 
     this.time.delayedCall(1000, () => {
@@ -164,7 +184,7 @@ export class Game extends Scene {
   ) {
     this.pizza = this.physics.add
       .sprite(player.x, player.y, "pizza")
-      .setScale(4);
+      .setScale(2);
 
     this.tweens.add({
       targets: this.pizza,
@@ -195,7 +215,7 @@ export class Game extends Scene {
     }
 
     const xDirection = this.gameState.currentPlayer === 1 ? -1 : 1;
-    const yDirection = -1; 
+    const yDirection = -1;
 
     this.pizza.setVelocity(
       xDirection * speed * Math.cos(Phaser.Math.DegToRad(calculatedAngle)),
@@ -204,7 +224,6 @@ export class Game extends Scene {
   }
 
   createBuildings() {
-    // todo create building entity.
     const buildingCount = 8;
     const buildingWidth = this.scale.width / buildingCount;
 

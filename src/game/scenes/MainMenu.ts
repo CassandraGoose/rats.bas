@@ -1,4 +1,5 @@
 import { Scene, GameObjects } from "phaser";
+import { createStarRectangle } from "../utilities/GameHelpers";
 
 export class MainMenu extends Scene {
   // background: GameObjects.Image;
@@ -22,79 +23,7 @@ export class MainMenu extends Scene {
   }
 
   create() {
-    // this.background = this.add.image(512, 384, 'background');
-
-    // this.logo = this.add.image(512, 300, 'logo')
-
-    //todo rename mainmenu to instructions or something
-
-    // todo lol make these with loops or something and put them in a method
-    this.add.text(
-      10,
-      10,
-      "*    *    *    *    *    *    *    *    *    *    *    *",
-      { color: "red", fontFamily: "Courier New", fontSize: 32 }
-    );
-    this.add.text(
-      10,
-      550,
-      "*    *    *    *    *    *    *    *    *    *    *    *",
-      { color: "red", fontFamily: "Courier New", fontSize: 32 }
-    );
-    this.add.text(10, 112, "*", {
-      color: "red",
-      fontFamily: "Courier New",
-      fontSize: 32,
-    });
-    this.add.text(10, 224, "*", {
-      color: "red",
-      fontFamily: "Courier New",
-      fontSize: 32,
-    });
-
-    this.add.text(10, 336, "*", {
-      color: "red",
-      fontFamily: "Courier New",
-      fontSize: 32,
-    });
-
-    this.add.text(10, 448, "*", {
-      color: "red",
-      fontFamily: "Courier New",
-      fontSize: 32,
-    });
-
-    this.add.text(972, 112, "*", {
-      color: "red",
-      fontFamily: "Courier New",
-      fontSize: 32,
-    });
-    this.add.text(972, 224, "*", {
-      color: "red",
-      fontFamily: "Courier New",
-      fontSize: 32,
-    });
-
-    this.add.text(972, 336, "*", {
-      color: "red",
-      fontFamily: "Courier New",
-      fontSize: 32,
-    });
-
-    this.add.text(972, 448, "*", {
-      color: "red",
-      fontFamily: "Courier New",
-      fontSize: 32,
-    });
-
-    this.title = this.add
-      .text(512, 200, "R A T S", {
-        fontFamily: "Courier",
-        fontSize: 38,
-        color: "#ffffff",
-        align: "center",
-      })
-      .setOrigin(0.5);
+    createStarRectangle(this);
 
     this.description = this.add
       .text(

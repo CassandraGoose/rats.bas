@@ -22,12 +22,8 @@ export class Player {
 
     const goalBuilding = this.determineGoalBuilding();
 
-    const player = this.physics.add.image(goalBuilding.x, 0, 'rat').setScale(0.7);
+    const player = this.physics.add.sprite(goalBuilding.x, 0, 'rat').setScale(3);
     this.gameObject = player;
-    // todo fix scale for real sprite
-    // todo figure out if we need a group or the game object or if we can use one or the other. 
-    this.gameObject.body?.setSize(126, 179);
-    this.gameObject.body?.setOffset(0, 0);
     this.playerGroup.add(player);
     this.setupPlayerPhysics();
   }
@@ -41,6 +37,10 @@ export class Player {
     return this.buildings.getChildren()[
       whichBuilding
     ] as Phaser.Physics.Arcade.Image;
+  }
+
+  updateScore() {
+    this.score++;
   }
 
   resetPlayer() {
